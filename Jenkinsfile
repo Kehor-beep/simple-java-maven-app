@@ -9,13 +9,20 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/Kehor-beep/simple-java-maven-app.git', branch: 'master'
+                // Checkout the same repo this Jenkinsfile lives in
+                checkout scm
             }
         }
 
-        stage('Build') {
+        stage('Test') {
             steps {
-                sh 'mvn -B -DskipTests clean package'
+                sh 'mvn -B test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                sh 'mvn -B clean package'
             }
         }
 
@@ -26,3 +33,4 @@ pipeline {
         }
     }
 }
+
