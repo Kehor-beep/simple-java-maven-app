@@ -26,6 +26,14 @@ pipeline {
             }
         }
 
+        stage('Build Docker Image') {
+            steps {
+                sh """
+                  docker build -t simple-java-maven-app:${BUILD_NUMBER} .
+                """
+            }
+        }
+
         stage('Archive Artifact') {
             steps {
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
