@@ -29,7 +29,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh """
-                  docker build -t simple-java-maven-app:${BUILD_NUMBER} .
+                  docker build -t simple-java-maven-app:${BUILD_NUMBER} -t simple-java-maven-app:latest .
                 """
             }
         }
