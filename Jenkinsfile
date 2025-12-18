@@ -69,7 +69,7 @@ pipeline {
           docker pull camildockerhub/simple-java-maven-app-1:latest
 
           echo "Running new container..."
-          docker run -d --name simple-java-maven-app-1 -p 8080:8080 camildockerhub/simple-java-maven-app-1:latest
+          docker run -d --name simple-java-maven-app-1 -p 8081:8080 camildockerhub/simple-java-maven-app-1:latest
         """
     }
 }
