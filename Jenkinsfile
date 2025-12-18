@@ -1,6 +1,19 @@
 pipeline {
     agent any
 
+parameters {
+        booleanParam(
+            name: 'DEPLOY',
+            defaultValue: true,
+            description: 'Deploy after successful build?'
+        )
+        choice(
+            name: 'ENV',
+            choices: ['local', 'skip'],
+            description: 'Where to deploy the app'
+        )
+    }
+
     tools {
         jdk 'jdk21'
         maven 'maven3'
@@ -56,8 +69,14 @@ pipeline {
             }
         }
 
-       stage('Deploy Locally') {
-           steps {
+stage('Deploy Locally') {
+    when {
+        allOf {
+            expression { params.DEPLOY }
+            expression { params.ENV == 'local' }
+        }
+    }
+    steps {
         sh """
           echo "Stopping old container if exists..."
           docker stop simple-java-maven-app || true
@@ -68,7 +87,7 @@ pipeline {
           echo "Pulling latest image from Docker Hub..."
           docker pull camildockerhub/simple-java-maven-app-1:latest
 
-          echo "Running new container..."
+          echo "Running new container on host port 8081..."
           docker run -d --name simple-java-maven-app -p 8081:8080 camildockerhub/simple-java-maven-app-1:latest
         """
     }
