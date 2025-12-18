@@ -56,6 +56,24 @@ pipeline {
             }
         }
 
+       stage('Deploy Locally') {
+           steps {
+        sh """
+          echo "Stopping old container if exists..."
+          docker stop simple-java-maven-app || true
+
+          echo "Removing old container if exists..."
+          docker rm simple-java-maven-app || true
+
+          echo "Pulling latest image from Docker Hub..."
+          docker pull camildockerhub/simple-java-maven-app-1:latest
+
+          echo "Running new container..."
+          docker run -d --name simple-java-maven-app-1 -p 8080:8080 camildockerhub/simple-java-maven-app-1:latest
+        """
+    }
+}
+
         stage('Archive Artifact') {
             steps {
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
