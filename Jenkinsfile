@@ -9,7 +9,7 @@ parameters {
         )
         choice(
             name: 'ENV',
-            choices: ['local', 'skip'],
+            choices: ['local', 'remote', 'skip'],
             description: 'Where to deploy the app'
         )
     }
@@ -90,6 +90,34 @@ stage('Deploy Locally') {
           echo "Running new container on host port 8081..."
           docker run -d --name simple-java-maven-app -p 8081:8080 camildockerhub/simple-java-maven-app-1:latest
         """
+    }
+}
+
+stage('Deploy to EC2') {
+    when {
+        allOf {
+            expression { params.DEPLOY }
+            expression { params.ENV == 'remote' }
+        }
+    }
+    steps {
+        sshagent(['ec2-ssh-key']) {
+            sh """
+              ssh -o StrictHostKeyChecking=no ubuntu@16.171.137.21 '
+                echo "Stopping old container..."
+                docker stop simple-java-maven-app || true
+
+                echo "Removing old container..."
+                docker rm simple-java-maven-app || true
+
+                echo "Pulling latest image..."
+                docker pull camildockerhub/simple-java-maven-app-1:latest
+
+                echo "Running new container..."
+                docker run -d -p 8080:8080 --name simple-java-maven-app camildockerhub/simple-java-maven-app-1:latest
+              '
+            """
+        }
     }
 }
 
