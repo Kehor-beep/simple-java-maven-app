@@ -103,7 +103,7 @@ stage('Deploy to EC2') {
     steps {
         sshagent(['ec2-ssh-key']) {
             sh """
-              ssh -o StrictHostKeyChecking=no ubuntu@16.171.137.21 '
+              ssh -o StrictHostKeyChecking=no ubuntu@13.53.193.192 '
                 echo "Stopping old container..."
                 docker stop simple-java-maven-app || true
 
