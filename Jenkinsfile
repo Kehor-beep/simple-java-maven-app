@@ -1,7 +1,11 @@
 pipeline {
-    agent any
-
-parameters {
+    agent {
+        docker {
+            image 'camildockerhub/maven-docker-agent:latest'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
+     parameters {
         booleanParam(
             name: 'DEPLOY',
             defaultValue: true,
@@ -12,11 +16,6 @@ parameters {
             choices: ['local', 'remote', 'skip'],
             description: 'Where to deploy the app'
         )
-    }
-
-    tools {
-        jdk 'jdk21'
-        maven 'maven3'
     }
 
     stages {
